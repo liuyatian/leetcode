@@ -1,0 +1,72 @@
+#前缀树+dfs
+class TrieNode{
+public:
+    char val;
+    bool isWord;
+    TrieNode *children[26];
+    TrieNode(){
+        val=0;
+        isWord=false;
+        memset(children,0x0,sizeof(TrieNode*)*26);
+    }
+    TrieNode(char c){
+        val=c;
+        isWord=false;
+        memset(children,0x0,sizeof(TrieNode*)*26);
+    }
+};
+class WordDictionary {
+public:
+    /** Initialize your data structure here. */
+    WordDictionary() {
+       root=new TrieNode(); 
+    }
+    
+    /** Adds a word into the data structure. */
+    void addWord(string word) {
+        TrieNode *p=root;
+        if(word.size()<=0)
+            return;
+        for(int i=0;i<word.size();i++){
+            char c=word[i];
+            if(p->children[c-'a']==NULL){
+                p->children[c-'a']=new TrieNode(c);
+            }
+            p=p->children[c-'a'];
+        }
+        p->isWord=true;
+    }
+    
+    /** Returns if the word is in the data structure. A word could contain the dot character '.' to represent any one letter. */
+    bool search(string word) {
+        if(word.size()<=0)
+            return true;
+        return searchmm(root,word);
+    }
+    bool searchmm(TrieNode *p,string word){
+        if(word.size()==0)
+            return p->isWord;
+        if(word[0]!='.'){
+            if(p->children[word[0]-'a'])
+                return searchmm(p->children[word[0]-'a'],word.substr(1));
+        }
+        else{
+            for(int i=0;i<26;i++){
+                if(p->children[i]){
+                    if(searchmm(p->children[i],word.substr(1)))
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+private:
+    TrieNode *root;
+};
+
+/**
+ * Your WordDictionary object will be instantiated and called as such:
+ * WordDictionary obj = new WordDictionary();
+ * obj.addWord(word);
+ * bool param_2 = obj.search(word);
+ */
