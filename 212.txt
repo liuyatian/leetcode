@@ -83,6 +83,7 @@ public:
         }
     };
     vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
+        set<string>st;
         vector<string>res;
         TrieNode *root=new TrieNode();
         for(int i=0;i<words.size();i++){
@@ -101,43 +102,40 @@ public:
             for(int j=0;j<board[0].size();j++){
                 string ans;
                 v[i][j]=true;
-                dfs(i,j,board,root,res,ans,v);
+                dfs(i,j,board,root,st,ans,v);
                 v[i][j]=false;
             }
         }
-        set<string>st;
-        for(int i=0;i<res.size();i++)
-            st.insert(res[i]);
-        vector<string>resnew;
         for(auto x:st)
-            resnew.push_back(x);
-        return resnew;
+            res.push_back(x);
+        return res;
     }
-    void dfs(int k,int t,vector<vector<char> >&board,TrieNode*root,vector<string>&res,string ans,vector<vector<bool> >v){
+    void dfs(int k,int t,vector<vector<char> >&board,TrieNode*root,set<string>&st,string ans,vector<vector<bool> >v){
         char c=board[k][t];
         if(root->children[c-'a']){
             if(root->children[c-'a']->isWord)
-                res.push_back(ans+c);
+                st.insert(ans+c);
             if(k+1<board.size()&&v[k+1][t]==false){
                 v[k+1][t]=true;
-                dfs(k+1,t,board,root->children[c-'a'],res,ans+c,v);
+                dfs(k+1,t,board,root->children[c-'a'],st,ans+c,v);
                 v[k+1][t]=false;
             }
             if(k-1>=0&&v[k-1][t]==false){
                 v[k-1][t]=true;
-                dfs(k-1,t,board,root->children[c-'a'],res,ans+c,v);
+                dfs(k-1,t,board,root->children[c-'a'],st,ans+c,v);
                 v[k-1][t]=false;
             }
             if(t+1<board[0].size()&&v[k][t+1]==false){
                 v[k][t+1]=true;
-                dfs(k,t+1,board,root->children[c-'a'],res,ans+c,v);
+                dfs(k,t+1,board,root->children[c-'a'],st,ans+c,v);
                 v[k][t+1]=false;
             }
             if(t-1>=0&&v[k][t-1]==false){
                 v[k][t-1]=true;
-                dfs(k,t-1,board,root->children[c-'a'],res,ans+c,v);
+                dfs(k,t-1,board,root->children[c-'a'],st,ans+c,v);
                 v[k][t-1]=false;
             }
         }
     }
 };
+
