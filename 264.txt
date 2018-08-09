@@ -1,0 +1,20 @@
+# 丑数
+class Solution {
+public:
+    int nthUglyNumber(int n) {
+        vector<int>res(1,1);
+        int a2=0,a3=0,a5=0;
+        while(res.size()<n){
+            int ans2=res[a2]*2,ans3=res[a3]*3,ans5=res[a5]*5;
+            int mm=min(ans2,min(ans3,ans5));
+            if(mm==ans2)
+                a2++;
+            if(mm==ans3)
+                a3++;
+            if(mm==ans5)
+                a5++;
+            res.push_back(mm);
+        }
+        return res[n-1];
+    }
+};
