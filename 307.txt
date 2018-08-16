@@ -1,0 +1,105 @@
+# 树状数组
+class NumArray {
+public:
+    vector<int>nums;
+    vector<int>sums;
+    int lowbit(int x){
+        return x&(-x);
+    }
+    void change(int i,int val){
+        while(i<sums.size()){
+            sums[i]+=val;
+            i+=lowbit(i);
+        }
+    }
+    int sum(int x){
+        int res=0;
+        while(x>0){
+            res+=sums[x];
+            x-=lowbit(x);
+        }
+        return res;
+    }
+    NumArray(vector<int> nums) {
+        this->nums=nums;
+        sums.resize(nums.size()+1);
+        for(int i=0;i<nums.size();i++){
+            change(i+1,nums[i]);
+        }
+    }
+    
+    void update(int i, int val) {
+        int diff=val-nums[i];
+        nums[i]=val;
+        change(i+1,diff);
+    }
+    
+    int sumRange(int i, int j) {
+        return sum(j+1)-sum(i);
+    }
+};
+#线段树
+class NumArray {
+public:
+    struct node{
+        int x,y,sum;
+        node *left;
+        node *right;
+        node(int a,int b){
+            x=a;
+            y=b;
+            sum=0;
+        }
+    };
+    node *root;
+    node *build(vector<int>&nums,int l,int r){
+        if(l>r)
+            return NULL;
+        node *ans=new node(l,r);
+        if(l==r){
+            ans->sum=nums[l];
+            return ans;
+        }
+        int mid=(l+r)/2;
+        ans->left=build(nums,l,mid);
+        ans->right=build(nums,mid+1,r);
+        ans->sum=ans->left->sum+ans->right->sum;
+        return ans;
+    }
+    void up(node *ans,int p,int val){
+        if(p>ans->y||p<ans->x)
+            return;
+        if(ans->x==ans->y&&ans->x==p){
+            ans->sum=val;
+            return;
+        }
+        int mid=(ans->x+ans->y)/2;
+        if(p<=mid)
+            up(ans->left,p,val);
+        else
+            up(ans->right,p,val);
+        ans->sum=ans->left->sum+ans->right->sum;
+    }
+    int solver(node *ans,int l,int r){
+        if(ans->x==l&&ans->y==r)
+            return ans->sum;
+        int mid=(ans->x+ans->y)/2;
+        if(r<=mid)
+            return solver(ans->left,l,r);
+        else if(l>mid)
+            return solver(ans->right,l,r);
+        else
+            return solver(ans->left,l,mid)+solver(ans->right,mid+1,r);
+    }
+    NumArray(vector<int> nums) {
+        this->root=build(nums,0,nums.size()-1);
+    }
+    
+    void update(int i, int val) {
+        up(this->root,i,val);
+    }
+    
+    int sumRange(int i, int j) {
+        return solver(root,i,j);
+    }
+};
