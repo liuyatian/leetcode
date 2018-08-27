@@ -1,0 +1,34 @@
+# 动态规划。  用pa数组来保存前一个位置，start保存初始位置
+class Solution {
+public:
+    vector<int> largestDivisibleSubset(vector<int>& nums) {
+        vector<int>res;
+        if(nums.size()==0)
+            return res;
+        int n=nums.size();
+        vector<int>dp(n,1);
+        vector<int>pa(n,-1);
+        sort(nums.begin(),nums.end());
+        int maxn=0,start=0;
+        for(int i=n-2;i>=0;i--){
+            for(int j=i+1;j<n;j++){
+                if(nums[j]%nums[i])
+                    continue;
+                if(dp[i]<dp[j]+1){
+                    pa[i]=j;
+                    dp[i]=dp[j]+1;
+                    if(dp[i]>maxn){
+                        maxn=dp[i];
+                        start=i;
+                    }
+                }
+            }
+        }
+        res.push_back(nums[start]);
+        while(pa[start]!=-1){
+            start=pa[start];
+            res.push_back(nums[start]);
+        }
+        return res;
+    }
+};
