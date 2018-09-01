@@ -1,0 +1,27 @@
+# dis   用数位来保存状态，然后用一个map加速
+class Solution {
+public:
+    bool solver(int maxn,int target,int used,map<int,bool>&mp){
+        if(mp.find(used)!=mp.end())
+            return mp[used];
+        for(int i=0;i<maxn;i++){
+            int temp=(1<<i);
+            if((temp&used)==0){
+                if(target<=i+1||!solver(maxn,target-i-1,temp|used,mp)){
+                    mp[used]=true;
+                    return true;
+                }
+            }
+        }
+        mp[used]=false;
+        return false;
+    }
+    bool canIWin(int maxChoosableInteger, int desiredTotal) {
+        if(desiredTotal<=maxChoosableInteger)
+            return true;
+        if(maxChoosableInteger*(maxChoosableInteger+1)/2<desiredTotal)
+            return false;
+        map<int,bool>mp;
+        return solver(maxChoosableInteger,desiredTotal,0,mp);
+    }
+};
