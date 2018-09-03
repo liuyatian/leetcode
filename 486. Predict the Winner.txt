@@ -1,0 +1,43 @@
+# 区间dp   dp[i][j]保存i到j区间先手能多拿的分数
+解法一:
+class Solution {
+public:
+    bool PredictTheWinner(vector<int>& nums) {
+        int n=nums.size();
+        if(n==0)
+            return true;
+        vector<vector<int> >dp(n,vector<int>(n,0));
+        for(int i=0;i<n;i++){
+            for(int j=i;j>=0;j--){
+                if(i==j)
+                    dp[j][i]=nums[i];
+                else{
+                    dp[j][i]=max(nums[i]-dp[j][i-1],nums[j]-dp[j+1][i]);
+                }
+            }
+        }
+        return dp[0][n-1]>=0;
+    }
+};
+解法二:
+class Solution {
+public:
+    bool PredictTheWinner(vector<int>& nums) {
+        int n=nums.size();
+        if(n==0)
+            return true;
+        if(n&1==0)
+            return true;    #偶数个数先手必胜
+        vector<int>dp(n,0);
+        for(int i=0;i<n;i++){
+            for(int j=i;j>=0;j--){
+                if(i==j)
+                    dp[j]=nums[j];
+                else{
+                    dp[j]=max(nums[i]-dp[j],nums[j]-dp[j+1]);
+                }
+            }
+        }
+        return dp[0]>=0;
+    }
+};
