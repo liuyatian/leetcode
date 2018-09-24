@@ -1,0 +1,31 @@
+207. Course Schedule
+DAG判断有没有环
+class Solution {
+public:
+    bool canFinish(int numCourses, vector<pair<int, int>>& s) {
+        vector<vector<int> >v(numCourses,vector<int>(0));
+        vector<int>cnt(numCourses,0);
+        for(auto x:s){
+            v[x.second].push_back(x.first);
+            cnt[x.first]++;
+        }
+        queue<int>q;
+        for(int i=0;i<numCourses;i++){
+            if(cnt[i]==0)
+                q.push(i);
+        }
+        while(!q.empty()){
+            int temp=q.front();
+            q.pop();
+            for(int i=0;i<v[temp].size();i++){
+                cnt[v[temp][i]]--;
+                if(cnt[v[temp][i]]==0)
+                    q.push(v[temp][i]);
+            }
+        }
+        for(int i=0;i<numCourses;i++)
+            if(cnt[i]!=0)
+                return false;
+        return true;
+    }
+};
