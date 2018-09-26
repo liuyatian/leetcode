@@ -1,0 +1,28 @@
+#参考讨论区的解法，有点像马尔可夫随机场
+class Solution {
+public:
+    vector<vector<int> >m={{2,1},{-2,-1},{2,-1},{-2,1},{1,2},{-1,-2},{1,-2},{-1,2}};
+    double knightProbability(int N, int K, int r, int c) {
+        vector<vector<vector<double> > >dp(K+1,vector<vector<double> >(N,vector<double>(N,0)));
+        dp[0][r][c]=1;
+        for(int t=1;t<=K;t++){
+            for(int i=0;i<N;i++){
+                for(int j=0;j<N;j++){
+                    for(auto x:m){
+                        int tx=i+x[0],ty=j+x[1];
+                        if(tx<N&&tx>=0&&ty<N&&ty>=0){
+                            dp[t][tx][ty]+=dp[t-1][i][j]*0.125;
+                        }
+                    }
+                }
+            }
+        }
+        double res=0;
+        for(int i=0;i<N;i++){
+            for(int j=0;j<N;j++){
+                res+=dp[K][i][j];
+            }
+        }
+        return res;
+    }
+};
