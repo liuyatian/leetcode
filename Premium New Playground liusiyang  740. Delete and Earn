@@ -1,0 +1,18 @@
+#非常巧妙的dp,和house robber那题相似
+class Solution {
+public:
+    int deleteAndEarn(vector<int>& nums) {
+        int n=nums.size();
+        vector<int>sum(10001,0);
+        for(auto x:nums)
+            sum[x]+=x;
+        int take=0,skip=0;
+        for(int i=0;i<10001;i++){
+            int takem=skip+sum[i];
+            int skipm=max(skip,take);
+            take=takem;
+            skip=skipm;
+        }
+        return max(skip,take);
+    }
+};
