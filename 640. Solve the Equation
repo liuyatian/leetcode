@@ -1,0 +1,64 @@
+class Solution {
+public:
+    vector<int> solver(string s){
+        bool flag=true;
+        int n=s.size();
+        vector<int>res(2,0);
+        for(int i=0;i<n;i++){
+            int j=i;
+            string temp;
+            while(j<n&&s[j]!='+'&&s[j]!='-'){
+                temp=temp+s[j];
+                j++;
+            }
+            if(temp[temp.size()-1]=='x'){
+                if(temp.size()>1){
+                    if(flag)
+                        res[0]+=stoi(temp.substr(0,temp.size()-1));
+                    else
+                        res[0]-=stoi(temp.substr(0,temp.size()-1));
+                }
+                else{
+                    if(flag)
+                        res[0]+=1;
+                    else
+                        res[0]-=1;
+                }
+            }
+            else if(temp.size()>0){
+                if(flag)
+                    res[1]+=stoi(temp);
+                else
+                    res[1]-=stoi(temp);
+            }
+            if(j<n){
+                if(s[j]=='+')
+                    flag=true;
+                else
+                    flag=false;
+            }
+            i=j;
+        }
+        return res;
+    }
+    string solveEquation(string equation) {
+        string s=equation;
+        int n=s.size();
+        int ans=0;
+        for(int i=0;i<n;i++){
+            if(s[i]=='='){
+                ans=i;
+                break;
+            }
+        }
+        vector<int>left=solver(s.substr(0,ans));
+        vector<int>right=solver(s.substr(ans+1));
+        if(left[0]==right[0]){
+            if(left[1]!=right[1])
+                return "No solution";
+            else
+                return "Infinite solutions";
+        }
+        return "x="+to_string((right[1]-left[1])/(left[0]-right[0]));
+    }
+};
