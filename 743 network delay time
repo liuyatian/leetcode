@@ -1,0 +1,64 @@
+solution 1:bellmanford algorigthm
+class Solution {
+public:
+    int networkDelayTime(vector<vector<int>>& times, int N, int K) {
+        vector<vector<int> >g(N+1);
+        vector<int>d(N+1,INT_MAX);
+        d[K]=0;
+        vector<int>v(N+1,0);
+        for(int i=1;i<N;i++){
+            for(int j=0;j<times.size();j++){
+                int x=times[j][0],y=times[j][1],t=times[j][2];
+                if(d[x]!=INT_MAX&&d[y]>d[x]+t)
+                    d[y]=d[x]+t;
+            }
+        }
+        int res=0;
+        for(int i=1;i<=N;i++){
+            res=max(res,d[i]);
+        }
+        return res==INT_MAX?-1:res;
+    }
+};
+
+solution 2:Dijsktra algorithm
+class Solution {
+public:
+    struct heapnode{
+        int d,u;
+        bool operator <(const heapnode &rhs)const{
+            return d>rhs.d;
+        }
+    };
+    int networkDelayTime(vector<vector<int>>& times, int N, int K) {
+        vector<vector<int> >g(N+1);
+        for(int i=0;i<times.size();i++){
+            g[times[i][0]].push_back(i);
+        }
+        priority_queue<heapnode>q;
+        vector<int>d(N+1,INT_MAX);
+        d[K]=0;
+        vector<int>v(N+1,0);
+        q.push({0,K});
+        while(!q.empty()){
+            heapnode temp=q.top();
+            q.pop();
+            int u=temp.u;
+            if(v[u])
+                continue;
+            v[u]=1;
+            for(int i=0;i<g[u].size();i++){
+                vector<int>edge=times[g[u][i]];
+                if(d[edge[1]]>d[u]+edge[2]){
+                    d[edge[1]]=d[u]+edge[2];
+                    q.push({d[edge[1]],edge[1]});
+                }
+            }
+        }
+        int res=0;
+        for(int i=1;i<=N;i++){
+        res=max(res,d[i]);
+        }
+        return res==INT_MAX?-1:res;
+    }
+};
